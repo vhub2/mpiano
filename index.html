@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>muthu Piano</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+text-align:center;
+color:white;
+background: radial-gradient(circle,#ff0000 0%,#8b0000 35%,#000000 80%);
+}
+
+h1{
+margin-top:20px;
+}
+
+#piano{
+position:relative;
+width:720px;
+margin:40px auto;
+height:260px;
+}
+
+.white{
+width:100px;
+height:260px;
+background:white;
+border:2px solid black;
+float:left;
+box-sizing:border-box;
+cursor:pointer;
+position:relative;
+display:flex;
+align-items:flex-end;
+justify-content:center;
+font-weight:bold;
+transition:0.1s;
+}
+
+.white.active{
+background:#eee;
+transform:translateY(6px);
+box-shadow:0 0 20px red;
+}
+
+.black{
+width:60px;
+height:160px;
+background:black;
+position:absolute;
+top:0;
+z-index:2;
+color:white;
+display:flex;
+align-items:flex-end;
+justify-content:center;
+font-size:12px;
+border-radius:0 0 5px 5px;
+cursor:pointer;
+transition:0.1s;
+}
+
+.black.active{
+background:#444;
+transform:translateY(4px);
+box-shadow:0 0 15px red;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>Muthu Piano</h1>
+
+<div id="piano">
+
+<div class="white" data-key="a" data-note="261.63">A</div>
+<div class="white" data-key="s" data-note="293.66">S</div>
+<div class="white" data-key="d" data-note="329.63">D</div>
+<div class="white" data-key="f" data-note="349.23">F</div>
+<div class="white" data-key="g" data-note="392.00">G</div>
+<div class="white" data-key="h" data-note="440.00">H</div>
+<div class="white" data-key="j" data-note="493.88">J</div>
+
+<div class="black" style="left:70px" data-key="w" data-note="277.18">W</div>
+<div class="black" style="left:170px" data-key="e" data-note="311.13">E</div>
+<div class="black" style="left:270px" data-key="r" data-note="369.99">R</div>
+<div class="black" style="left:370px" data-key="t" data-note="415.30">T</div>
+<div class="black" style="left:470px" data-key="y" data-note="466.16">Y</div>
+<div class="black" style="left:570px" data-key="u" data-note="523.25">U</div>
+
+
+
+</div>
+
+<script>
+
+const audio = new AudioContext();
+
+function play(freq){
+
+const osc = audio.createOscillator();
+const gain = audio.createGain();
+
+osc.frequency.value=freq;
+
+osc.connect(gain);
+gain.connect(audio.destination);
+
+osc.start();
+
+gain.gain.exponentialRampToValueAtTime(
+0.0001,
+audio.currentTime+1
+);
+
+}
+
+function pressKey(key){
+
+const element=document.querySelector(`[data-key="${key}"]`);
+
+if(!element) return;
+
+play(element.dataset.note);
+
+element.classList.add("active");
+
+setTimeout(()=>{
+element.classList.remove("active");
+},120);
+
+}
+
+document.addEventListener("keydown",(e)=>{
+pressKey(e.key);
+});
+
+document.querySelectorAll(".white,.black").forEach(key=>{
+key.addEventListener("click",()=>{
+pressKey(key.dataset.key);
+});
+});
+
+</script>
+
+</body>
+</html>
